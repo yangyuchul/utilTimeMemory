@@ -2,8 +2,8 @@
 
 ListFile=$1
 RunDir=$2
-RunDepth=2
-if  [ ! $1 ] || [ ! $2 ] || [ ! -f $ListFile ]; then echo "Usage $0 filelist dirRun runDepth[int]"; exit; fi
+RunDepth="10"
+if  [ ! $1 ] || [ ! $2 ] || [ ! -f $ListFile ]; then echo "Usage $0 filelist dirRun runDepth[bit]"; exit; fi
 if [ $3 ]; then RunDepth=$3; fi
 if [ -d $RunDir ]; then echo "$RunDir exist"; exit; fi
 
@@ -41,13 +41,13 @@ step3
 echo "### Running cmsRun"
 pids=""
 
-if [ $RunDepth -gt 0 ]; then
+if [ "${RunDepth:0:1}" == "1" ]; then
 	cmsDriver.py ${cmsDriver} --fileout file:step3.root --python_filename step3.py
 	cmsRun step3.py >& step3.log &
 	pids="$!"
 fi
 
-if [ $RunDepth -gt 1 ]; then
+if [ "${RunDepth:1:1}" == "1" ]; then
 	cmsDriver.py ${cmsDriver} --fileout file:step3_igprofCPU.root --python_filename step3_igprofCPU.py
 	igprof -pp -z -o igprofCPU_step3.gz -t cmsRun cmsRun step3_igprofCPU.py >& step3_igprofCPU.log &
 	pids="$pids $!"

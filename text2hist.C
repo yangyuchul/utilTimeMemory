@@ -1,7 +1,7 @@
-void text2hist(TString inFile, TString title="histogram", TString outname="hist.gif") {
+void text2hist(TString inFile, TString title="histogram", TString outname="hist.gif", int nBins=100, float minX=0, float maxX=50) {
 
 	gStyle->SetOptStat(111100);
-	gStyle->SetOptStat(0);
+//	gStyle->SetOptStat(0);
 
 
 	ifstream in;
@@ -28,7 +28,7 @@ void text2hist(TString inFile, TString title="histogram", TString outname="hist.
 	in.close();
 
 	//TH1F* h1 = new TH1F("h1","h1",100,min,max*1.1);
-	TH1F* h1 = new TH1F("h1",title,100,0,50);
+	TH1F* h1 = new TH1F("h1",title,nBins,minX,maxX);
 	h1->SetLineWidth(2);
 	for(std::vector<float>::iterator it=valueVec.begin(); it!=valueVec.end(); it++) {
 		h1->Fill(*it);
@@ -53,6 +53,7 @@ void text2hist(TString inFile, TString title="histogram", TString outname="hist.
 	sprintf(temp4, "Time Max: %.2f on evt %d", max, maxEvent);
 	
 	TCanvas* c1 = new TCanvas();
+	c1->SetLogy();
 	h1->Draw();
 
 	TLatex *t = new TLatex();
@@ -60,7 +61,7 @@ void text2hist(TString inFile, TString title="histogram", TString outname="hist.
 	t->SetTextAlign(22);
 //	t->SetTextFont(63);
 //	t->SetTextSizePixels(22);
-	t->DrawLatex(0.65,0.90,title);
+//	t->DrawLatex(0.65,0.90,title);
 	t->DrawLatex(0.65,0.85,temp1);
 	t->DrawLatex(0.65,0.80,temp2);
 	t->DrawLatex(0.65,0.75,temp3);

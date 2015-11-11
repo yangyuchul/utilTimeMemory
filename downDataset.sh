@@ -31,23 +31,36 @@ if [ ! $1 ]; then echo "usage: $0 dataset nEvents"; exit; fi
 
 dataset=$1
 nDown=-1
-nSkip=-1
+skips=""
 if [ $2 ]; then nDown=$2; fi
-if [ $3 ]; then nSkip=$3; fi
-nSkip1=$nSkip
+iarg=0
+for arg in $@
+do
+	((iarg++))
+	if [ ${iarg} -ge 3 ]; then 
+		skips="$skips $arg"; 
+		skipStr="${skipStr}_${arg}"
+	fi
+done
+
 echo "### Downloading $nDown events in $dataset"
 name=`dirString $dataset`
 das_client.py --limit 0 --query "file dataset=${dataset} | grep file.name, file.nevents" | grep root > .${name}.nevent
 tevt=0
-rm -rf ${name}_nEvt${nDown}_fSkip${nSkip}.localfile
+listFile=${name}_nEvt${nDown}${skipStr}.localfile
+rm -rf $listFile
+ifile=0
 cat .${name}.nevent | while read thisLine; do
-	if [ $nSkip -gt 0 ]; then ((nSkip--)); continue; fi
+	((ifile++))
+	isSkip=0
+	for nSkip in $skips; do if [ "$nSkip" == "$ifile" ]; then isSkip=1; fi; done
+	if [ "$isSkip" == "1" ]; then echo "### Skip $thisLine"; continue; fi
 	file=`echo $thisLine | awk '{print $1}'`
 	nevt=`echo $thisLine | awk '{print $2}'`
 	tevt=`expr $tevt + $nevt`
-	fileDown $file $ToDir
-	echo "file:${ToDir}/${file}" >> ${name}_nEvt${nDown}_fSkip${nSkip1}.localfile 
-	echo $file $nevt $tevt
+#	fileDown $file $ToDir
+	echo "file:${ToDir}/${file}" >> $listFile
+	echo "$file $nevt $tevt"
 	if [ $tevt -ge $nDown ] && [ $nDown -ne -1 ]; then break; fi
 done
 
