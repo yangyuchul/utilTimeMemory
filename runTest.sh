@@ -46,7 +46,7 @@ if [ "${RunDepth:0:1}" == "1" ]; then
 	cmsRun step3.py >& step3.log &
 	pid="$!"
 	pids="$pid"
-	/x3/cms/ycyang/RECO/ppMCTimeMem/utilTimeMemory/PSinfo.sh $pid &
+	/hcp/data/data02/ycyang/RECO/ppMCTimeMem/utilTimeMemory/PSinfo.sh $pid &
 fi
 
 if [ "${RunDepth:1:1}" == "1" ]; then

@@ -4,6 +4,7 @@ ToDir="/disk3/ycyang/"
 if [ "${HOSTNAME}" == "ccp1u" ]; then ToDir="/x4/cms/ycyang/"; fi
 if [ "${HOSTNAME}" == "ccp" ]; then ToDir="/x4/cms/ycyang/"; fi
 if [ "${HOSTNAME:0:4}" == "node" ]; then ToDir="/x4/cms/ycyang/"; fi
+if [ "${HOSTNAME:0:4}" == "ui02" ]; then ToDir="/hcp/data/data02/ycyang/"; fi
 
 function dirString() {
    dataStr=${1//\//_D_}
@@ -58,7 +59,7 @@ cat .${name}.nevent | while read thisLine; do
 	file=`echo $thisLine | awk '{print $1}'`
 	nevt=`echo $thisLine | awk '{print $2}'`
 	tevt=`expr $tevt + $nevt`
-#	fileDown $file $ToDir
+	fileDown $file $ToDir
 	echo "file:${ToDir}/${file}" >> $listFile
 	echo "$file $nevt $tevt"
 	if [ $tevt -ge $nDown ] && [ $nDown -ne -1 ]; then break; fi
